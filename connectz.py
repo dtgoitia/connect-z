@@ -8,7 +8,7 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('inputfilename', nargs='?', type=argparse.FileType('r'),
                         default=None)
-    import ipdb; ipdb.set_trace()
+    # import ipdb; ipdb.set_trace()
     args = parser.parse_args()
     print(args)
     with args.inputfilename as file:
