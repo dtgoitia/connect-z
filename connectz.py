@@ -25,23 +25,38 @@ def input_file() -> pathlib.PosixPath:
 
     file = files[0]
     path = pathlib.Path.cwd() / file
-    import ipdb; ipdb.set_trace()
     if not path.exists():
         raise FileNotFoundError('9')
 
-    return files[0]
+    return path
+
+
+def validate_file_content(content: str) -> None:
+    # TODO
+    raise ValueError('8')
+
+
+def read_content(path: pathlib.PosixPath) -> str:
+    # TODO: igual mergealo con el input_file de arriba?
+    with open(path, 'r') as file:
+        content = file.read()
+    validate_file_content(content)
+    return content
+
+
+def check_game(content: str) -> str:
+    # TODO
+    pass
 
 
 def main():
     try:
-        file = input_file()
+        path = input_file()
+        content = read_content(path)
+        result = check_game(content)
+        log(result)
     except (ValueError, FileNotFoundError) as e:
         log(e.args[0])
-        return
-
-    with file:
-        for line in file:
-            log(line)
 
 
 if __name__ == '__main__':
