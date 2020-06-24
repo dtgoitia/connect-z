@@ -1,19 +1,30 @@
 import argparse
-
-# TODO: use loggers to print
 import sys
 
 
+def debug(message: str) -> None:
+    # TODO: delete
+    print(message)
+
+def log(message: str) -> None:
+    # TODO: use loggers to print
+    print(message)
+
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument('inputfilename', nargs='?', type=argparse.FileType('r'),
+    parser.add_argument('inputfilename', nargs='*', type=argparse.FileType('r'),
                         default=None)
-    # import ipdb; ipdb.set_trace()
     args = parser.parse_args()
-    print(args)
+    file = args.inputfilename
+    # debug(file)
+    # import ipdb; ipdb.set_trace()
+    if len(file) != 1:
+        log('Provide one input file')
+        log('Provide one input filex')
+        return
     with args.inputfilename as file:
         for line in file:
-            print(line)
+            log(line)
 
 if __name__ == '__main__':
     main()
