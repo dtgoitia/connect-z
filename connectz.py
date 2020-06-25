@@ -47,16 +47,26 @@ def parse_game(path: pathlib.PosixPath) -> Game:
             raise ValueError('8')
 
 
-def check_game(content: str) -> str:
-    # TODO
+def validate_winability(game: Game) -> None:
+    """
+    Raise an exception if the game is impossible to win.
+    """
+    if (game.columns > game.line_length and
+        game.rows > game.line_length):
+        return
+    raise ValueError('7')
+
+
+def check(game: Game) -> str:
+    validate_winability(game)
     pass
 
 
 def main():
     try:
         path = input_file()
-        content = parse_game(path)
-        result = check_game(content)
+        game = parse_game(path)
+        result = check(game)
         log(result)
     except (ValueError, FileNotFoundError) as e:
         log(e.args[0])
