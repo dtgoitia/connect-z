@@ -54,8 +54,8 @@ def parse_game(path: pathlib.PosixPath) -> Game:
 
 
 def validate_winnability(game: Game) -> None:
-    if (game.line_length < game.columns or 
-        game.line_length < game.rows):
+    if (game.line_length <= game.columns or 
+        game.line_length <= game.rows):
         return
     raise ValueError('7')
 
