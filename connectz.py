@@ -70,6 +70,8 @@ class Board:
                       for row in range(game.rows)]
 
     def drop_chip(self, player: int, column: int) -> None:
+        if self.column_amount < column:
+            raise ValueError('6')
         row = self._first_empty_row_by_column(column)
         self.board[row][column] = player
 

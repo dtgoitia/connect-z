@@ -32,6 +32,13 @@ class ConnectzTest(unittest.TestCase):
         expected_log_calls = (call('5'),)
         mocked_log.assert_has_calls(expected_log_calls)
 
+    @patch.object(sys, 'argv', ['connectz.py', 'illegal_column'])
+    @patch('connectz.log')
+    def test_illegal_row(self, mocked_log):
+        connectz.main()
+        expected_log_calls = (call('6'),)
+        mocked_log.assert_has_calls(expected_log_calls)
+
     @patch.object(sys, 'argv', ['connectz.py', 'impossible_game'])
     @patch('connectz.log')
     def test_impossible_game(self, mocked_log):
