@@ -92,8 +92,8 @@ class Board:
             if value == EMPTY_PLACE:
                 return row_index
         else:
-            # TODO: if column is full, handle it
-            raise ValueError('??')
+            # Column full, impossible to a chip here
+            raise ValueError('5')
 
     def __str__(self) -> str:
         # TODO: for debugging purposes, delete after
