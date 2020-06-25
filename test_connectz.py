@@ -6,7 +6,6 @@ import connectz
 
 
 EXISTING_FILE = 'good_file'
-INVALID_FILE = 'invalid_file'
 NON_EXISTING_FILE = 'non_existing_file'
 
 
@@ -30,9 +29,10 @@ class ConnectzTest(unittest.TestCase):
         )
         mocked_log.assert_has_calls(expected_log_calls)
 
-    @patch.object(sys, 'argv', ['connectz.py', INVALID_FILE])
+
+    @patch.object(sys, 'argv', ['connectz.py', 'illegal_game'])
     @patch('connectz.log')
-    def test_invalid_file(self, mocked_log):
+    def test_illegal_game(self, mocked_log):
         connectz.main()
         expected_log_calls = (
             call('8'),
@@ -43,9 +43,7 @@ class ConnectzTest(unittest.TestCase):
     @patch('connectz.log')
     def test_file_error(self, mocked_log):
         connectz.main()
-        expected_log_calls = (
-            call('9'),
-        )
+        expected_log_calls = (call('9'),)
         mocked_log.assert_has_calls(expected_log_calls)
 
 

@@ -1,4 +1,5 @@
 import argparse
+from collections import namedtuple
 import io
 import pathlib
 import sys
@@ -31,17 +32,19 @@ def input_file() -> pathlib.PosixPath:
     return path
 
 
-def validate_file_content(content: str) -> None:
-    # TODO
-    raise ValueError('8')
+Game = namedtuple('Game', ['columns', 'rows', 'line_length', 'moves'])
 
 
-def read_content(path: pathlib.PosixPath) -> str:
-    # TODO: igual mergealo con el input_file de arriba?
+def parse_game(path: pathlib.PosixPath) -> Game:
     with open(path, 'r') as file:
-        content = file.read()
-    validate_file_content(content)
-    return content
+        try:
+            first_file_line = next(file)
+            game_dimensions = first_file_line.strip().split(' ')
+            game_dimensions = (int(dimension) for dimension in game_dimensions)
+            moves = [line.strip() for line in file if line] # TODO: generator?
+            return Game(*game_dimensions, moves)
+        except:
+            raise ValueError('8')
 
 
 def check_game(content: str) -> str:
@@ -52,7 +55,7 @@ def check_game(content: str) -> str:
 def main():
     try:
         path = input_file()
-        content = read_content(path)
+        content = parse_game(path)
         result = check_game(content)
         log(result)
     except (ValueError, FileNotFoundError) as e:
