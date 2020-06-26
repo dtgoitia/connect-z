@@ -12,6 +12,19 @@ PLAYER_A = 1
 PLAYER_B = 2
 
 
+class Output(enum.Enum):
+    DRAW = '0'
+    PLAYER_1_WINS = '1'
+    PLAYER_2_WINS = '2'
+    INCOMPLETE = '3'
+    ILLEGAL_CONTINUE = '4'
+    ILLEGAL_ROW = '5'
+    ILLEGAL_COLUMN = '6'
+    ILLEGAL_GAME = '7'
+    INVALID_FILE = '8'
+    FILE_ERROR = '9'
+
+
 def debug(message: str) -> None:
     # TODO: delete
     print(message)
@@ -34,7 +47,7 @@ def input_file() -> pathlib.PosixPath:
     file = files[0]
     path = pathlib.Path.cwd() / file
     if not path.exists():
-        raise FileNotFoundError('9')
+        raise FileNotFoundError(Output.FILE_ERROR.value)
 
     return path
 
@@ -51,14 +64,14 @@ def parse_game(path: pathlib.PosixPath) -> Game:
             moves = tuple((int(line) for line in file if line))
             return Game(*game_dimensions, moves)
         except:
-            raise ValueError('8')
+            raise ValueError(Output.INVALID_FILE.value)
 
 
 def validate_winnability(game: Game) -> None:
     if (game.line_length <= game.columns or 
         game.line_length <= game.rows):
         return
-    raise ValueError('7')
+    raise ValueError(Output.ILLEGAL_GAME.value)
 
 
 class Board:
@@ -76,7 +89,7 @@ class Board:
 
     def drop_chip(self, player: int, column: int) -> None:
         if self.column_amount < column:
-            raise ValueError('6')
+            raise ValueError(Output.ILLEGAL_COLUMN.value)
         row = self._first_empty_row_by_column(column)
         self.board[row][column] = player
 
@@ -146,7 +159,7 @@ class Board:
             return column.index(EMPTY_PLACE)
         except ValueError:
             # Column full, impossible to a chip here
-            raise ValueError('5')
+            raise ValueError(Output.ILLEGAL_ROW.value)
 
     def __str__(self) -> str:
         # TODO: for debugging purposes, delete after
