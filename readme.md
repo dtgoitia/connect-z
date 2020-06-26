@@ -12,3 +12,19 @@ Assumption: the input file refers to rows and columns using a 1-based index, not
 
 The board stores its value in lists because it's more efficient to mutate elements in the lists than copying the whole board by iterating over it and update a single value in the process.
 
+Store board by columns instead of by rows:
+  - it is easier to find the first free row in a column, if any
+  - no special benefit if I store by rows
+
+Instead of searching the whole board in each move:
+
+  1. Ensure to check if there is any winning/loosing game after each move.
+
+  2. Only check the segments of the rows, columns and diagonals which might be
+     now -after the last move- potential candidates to contain a winning line.
+
+     These segments are included in the rows, columns and diagonals that cross
+     the cell where the last move was done. The length of the segments is
+     limited by the cells that -being N the number of cells in the line that
+     wins the game- are N cells away from the cell where the last move was
+     done. The segments cannot stretch beyond the board limits.

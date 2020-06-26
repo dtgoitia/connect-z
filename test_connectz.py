@@ -66,6 +66,28 @@ class ConnectzTest(unittest.TestCase):
         connectz.main()
         expected_log_calls = (call('9'),)
         mocked_log.assert_has_calls(expected_log_calls)
+    
+    def test_affected_segments(self):
+        game = connectz.Game(columns=7, rows=6, line_length=3, moves=())
+        board = connectz.Board(game)
+        board.board = [
+        # row 0  1  2...
+            [ 1, 2, 3, 4, 5, 6], # column 0
+            [ 7, 8, 9,10,11,12], # column 1
+            [13,14,15,16,17,18], # ..
+            [19,20,21,22,23,24],
+            [25,26,27,28,29,30],
+            [31,32,33,34,35,36],
+            [37,38,39,40,41,42],
+        ]
+        board._last_move = connectz.Cell(column=1, row=4)
+        segments = [s for s in board._segments_affected_by_last_move()]
+        assert segments[0] == (9, 10, 11, 12) # affected column
+        assert segments[1] == (5, 11, 17, 23) # affected row
+        assert segments[2] == (4, 11, 18)     # affected diagonal a
+        assert segments[3] == (21, 16, 11, 6) # affected diagonal b
+        
+        assert len(segments) == 4
 
 
 if __name__ == '__main__':
