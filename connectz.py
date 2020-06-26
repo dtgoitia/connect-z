@@ -90,10 +90,9 @@ class Board:
     
     def _first_empty_row_by_column(self, column_index: int) -> int:
         column = next(islice(self.columns, column_index, column_index + 1))
-        for row_index, value in enumerate(column):
-            if value == EMPTY_PLACE:
-                return row_index
-        else:
+        try:
+            return column.index(EMPTY_PLACE)
+        except ValueError:
             # Column full, impossible to a chip here
             raise ValueError('5')
 
