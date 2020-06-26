@@ -25,6 +25,13 @@ class ConnectzTest(unittest.TestCase):
         expected_log_calls = (call('Provide one input file'),)
         mocked_log.assert_has_calls(expected_log_calls)
 
+    @patch.object(sys, 'argv', ['connectz.py', 'player_2_wins_with_row'])
+    @patch('connectz.log')
+    def test_player_2_wins_with_row(self, mocked_log):
+        connectz.main()
+        expected_log_calls = (call('2'),)
+        mocked_log.assert_has_calls(expected_log_calls)
+
     @patch.object(sys, 'argv', ['connectz.py', 'illegal_row'])
     @patch('connectz.log')
     def test_illegal_row(self, mocked_log):
