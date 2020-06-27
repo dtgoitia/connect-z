@@ -3,7 +3,7 @@ import enum
 from collections import namedtuple
 from itertools import cycle, islice
 import pathlib
-from typing import Generator, List, Set, Tuple, Union
+from typing import Dict, Generator, List, Set, Tuple, Union
 import sys
 
 from pympler import asizeof # TODO: delete
@@ -76,7 +76,6 @@ def parse_game(path: pathlib.PosixPath) -> Game:
             raise ValueError(Output.INVALID_FILE.value)
 
         if not moves:
-            # Only dimensions line
             raise ValueError(Output.INCOMPLETE.value)
         return Game(*game_dimensions, moves)
 
@@ -87,15 +86,13 @@ def validate_winnability(game: Game) -> None:
         return
     raise ValueError(Output.ILLEGAL_GAME.value)
 
-# TODO: worth having?
-Cell = namedtuple('Cell', ['column', 'row'])
 
 class Board:
     board: List[List[str]]
     line_length: int
     column_amount: int
     row_amount: int
-    _last_move: Cell
+    _last_move: Dict[str, str]
 
     def __init__(self, game: Game) -> None:
         self.board = [[EMPTY_PLACE for row in range(game.rows)]
@@ -110,7 +107,7 @@ class Board:
             raise ValueError(Output.ILLEGAL_COLUMN.value)
         row = self._first_empty_row_by_column(column)
         self.board[column][row] = player
-        self._last_move = Cell(column=column, row=row)
+        self._last_move = {'column': column, 'row': row}
         return self.status()
 
     def status(self) -> int:
@@ -133,8 +130,8 @@ class Board:
         # check only the cells that could potentially form a winning line with
         # the just updated cell (X), and ignoring any cell that is further than
         # N cells away from X, where N is length of the line to win the game.
-        last_column = self._last_move.column
-        last_row = self._last_move.row
+        last_column = self._last_move['column']
+        last_row = self._last_move['row']
         distance = self.line_length - 1
 
         start_column = last_column - distance

@@ -150,7 +150,7 @@ class ConnectzTest(unittest.TestCase):
             [31,32,33,34,35,36],
             [37,38,39,40,41,42],
         ]
-        board._last_move = connectz.Cell(column=1, row=4)
+        board._last_move = {'column': 1, 'row': 4}
         segments = [s for s in board._segments_affected_by_last_move()]
         assert segments[0] == (9, 10, 11, 12) # affected column
         assert segments[1] == (5, 11, 17, 23) # affected row
