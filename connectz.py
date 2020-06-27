@@ -27,14 +27,7 @@ class Output(enum.Enum):
     FILE_ERROR = 9
 
 
-def debug(message: str) -> None:
-    # TODO: delete
-    # print(message)
-    pass
-
-
 def log(message: Union[int, str]) -> None:
-    # TODO: use loggers to print
     print(message)
 
 
@@ -218,18 +211,11 @@ def play(game: Game) -> int:
 
     winner = None
     board = Board(game)
-    debug('')
 
     players = cycle((PLAYER_A, PLAYER_B))
     for move, player in zip(game.moves, players):
-        debug(f'player {player} drops chip in column {move}')
-        column = move - 1
+        column = move - 1 # translate from 1-based to 0-based index
         outcome = board.drop_chip(player, column)
-        debug('')
-        debug(board)
-        extra = '' if outcome == 0 else " <-- win"
-        debug(f'outcome: {outcome} {extra}')
-        debug('')
         if outcome != NO_WINNER:
             if winner:
                 raise ValueError(Output.ILLEGAL_CONTINUE.value)
