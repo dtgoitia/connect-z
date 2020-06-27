@@ -118,7 +118,7 @@ class Board:
     def _check_winner(self, segments: Generator[Tuple[int], None, None]) -> int:
         for segment in segments:
             outcome = self._check_winner_in_segment(segment)
-            if outcome in (PLAYER_A, PLAYER_B):
+            if outcome != NO_WINNER:
                 return outcome
         else:
             return NO_WINNER
