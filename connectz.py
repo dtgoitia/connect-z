@@ -1,10 +1,9 @@
 import argparse
 import enum
 from collections import namedtuple
-from itertools import cycle, islice
+from itertools import cycle
 import pathlib
 from typing import Dict, Generator, List, Set, Tuple, Union
-import sys
 
 
 EMPTY_PLACE = 0
