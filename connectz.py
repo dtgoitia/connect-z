@@ -59,12 +59,18 @@ def input_file() -> pathlib.PosixPath:
 Game = namedtuple('Game', ['columns', 'rows', 'line_length', 'moves'])
 
 
+def parse_dimensions_line(line: str) -> Tuple[int]:
+    game_dimensions = line.strip().split(' ')
+    if len(game_dimensions) != 3:
+        raise ValueError(Output.INVALID_FILE.value)
+    return tuple((int(dimension) for dimension in game_dimensions)) 
+
+
 def parse_game(path: pathlib.PosixPath) -> Game:
     with open(path, 'r') as file:
         try:
             first_file_line = next(file)
-            game_dimensions = first_file_line.strip().split(' ')
-            game_dimensions = (int(dimension) for dimension in game_dimensions)
+            game_dimensions = parse_dimensions_line(first_file_line)
             moves = tuple((int(line) for line in file if line))
             return Game(*game_dimensions, moves)
         except:
