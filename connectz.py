@@ -86,7 +86,8 @@ class Board:
     row_amount: int
     _last_move: Dict[str, str]
 
-    __slots__ = ['board', 'line_length', 'column_amount', 'row_amount', '_last_move']
+    __slots__ = ['board', 'line_length', 'column_amount', 'row_amount',
+                 '_last_move']
  
     def __init__(self, game: Game) -> None:
         # The row that contains the columns never mutates, hence it can be a 
@@ -110,10 +111,6 @@ class Board:
     def status(self) -> int:
         segments = self._segments_affected_by_last_move()
         return self._check_winner(segments)
-
-    @property
-    def columns(self) -> Generator[int, None, None]:
-        return (column for column in self.board)
 
     def _check_winner(self, segments: Generator[Tuple[int], None, None]) -> int:
         for segment in segments:
@@ -146,9 +143,8 @@ class Board:
             return NO_WINNER
 
     def _first_empty_row_by_column(self, column_index: int) -> int:
-        column = next(islice(self.columns, column_index, column_index + 1))
         try:
-            return column.index(EMPTY_PLACE)
+            return self.board[column_index].index(EMPTY_PLACE)
         except ValueError:
             # Column full, impossible to a chip here
             raise ValueError(Output.ILLEGAL_ROW.value)
