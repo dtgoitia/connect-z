@@ -101,7 +101,7 @@ class Board:
         self._last_move = None
 
     def drop_chip(self, player: int, column: int) -> int:
-        if self.column_amount < column:
+        if column < 0 or self.column_amount <= column:
             raise ValueError(Output.ILLEGAL_COLUMN.value)
         row = self._first_empty_row_by_column(column)
         self.board[column][row] = player

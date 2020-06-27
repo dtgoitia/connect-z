@@ -35,3 +35,8 @@ Instead of searching the whole board in each move:
 According to the input file specification "after the game dimensions line, each
 subsequent line of the file represents a single move in the game". Hence a file
 with empty lines between the moves will result in an invalid game.
+
+According to the instructions "a move is described by a single positive
+integer", which is unclear about whether if an input file might have negative
+integers or zero, so I decided to code defensively and check each move to
+discard invalid ranges.

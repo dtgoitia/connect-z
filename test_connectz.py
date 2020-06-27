@@ -88,9 +88,16 @@ class ConnectzTest(unittest.TestCase):
         expected_log_calls = (call(5),)
         mocked_log.assert_has_calls(expected_log_calls)
 
-    @patch.object(sys, 'argv', ['connectz.py', 'tests/illegal_column'])
+    @patch.object(sys, 'argv', ['connectz.py', 'tests/illegal_column_too_big'])
     @patch('connectz.log')
-    def test_illegal_column(self, mocked_log):
+    def test_illegal_column_too_big(self, mocked_log):
+        connectz.main()
+        expected_log_calls = (call(6),)
+        mocked_log.assert_has_calls(expected_log_calls)
+
+    @patch.object(sys, 'argv', ['connectz.py', 'tests/illegal_column_too_small'])
+    @patch('connectz.log')
+    def test_illegal_column_too_small(self, mocked_log):
         connectz.main()
         expected_log_calls = (call(6),)
         mocked_log.assert_has_calls(expected_log_calls)
