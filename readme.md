@@ -1,3 +1,6 @@
+> A string of ASCII text is also valid UTF-8 text.
+> [Source](https://docs.python.org/3/howto/unicode.html)
+
 Capturing the output from sys was quite unreliable, so I opted for mocking the `log` function.
 
 Using the `argparse.FileType` type was okay, until I passed non existing paths. To capture the `No such file or directory` error I needed to replace it with `validate_file_path`.
@@ -32,3 +35,6 @@ Instead of searching the whole board in each move:
 According to the input file specification "after the game dimensions line, each
 subsequent line of the file represents a single move in the game". Hence a file
 with empty lines between the moves will result in an invalid game.
+
+- [ ] Look for TODOs
+- [ ] plot how the memory grows when the board gets bigger with `list` or with `array.array`
