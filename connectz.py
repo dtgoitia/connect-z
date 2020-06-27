@@ -72,9 +72,13 @@ def parse_game(path: pathlib.PosixPath) -> Game:
             first_file_line = next(file)
             game_dimensions = parse_dimensions_line(first_file_line)
             moves = tuple((int(line) for line in file if line))
-            return Game(*game_dimensions, moves)
         except:
             raise ValueError(Output.INVALID_FILE.value)
+
+        if not moves:
+            # Only dimensions line
+            raise ValueError(Output.INCOMPLETE.value)
+        return Game(*game_dimensions, moves)
 
 
 def validate_winnability(game: Game) -> None:
@@ -215,7 +219,6 @@ class Board:
 def play(game: Game) -> int:
     validate_winnability(game)
 
-    outcome = None
     # TODO: worth storing all states?
     # only the previous state to see if after the game has been drawn or won,
     # there are still more movevements specified in the input file, case in
@@ -235,6 +238,11 @@ def play(game: Game) -> int:
         debug(f'outcome: {outcome} {extra}')
         debug('')
 
+    if outcome == NO_WINNER:
+        max_moves = game.columns * game.rows
+        if len(game.moves) == max_moves:
+            return Output.DRAW.value
+        return Output.INCOMPLETE.value
     return outcome
 
 

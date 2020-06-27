@@ -25,6 +25,13 @@ class ConnectzTest(unittest.TestCase):
         expected_log_calls = (call('connectz.py: Provide one input file'),)
         mocked_log.assert_has_calls(expected_log_calls)
 
+    @patch.object(sys, 'argv', ['connectz.py', 'draw'])
+    @patch('connectz.log')
+    def test_draw(self, mocked_log):
+        connectz.main()
+        expected_log_calls = (call(0),)
+        mocked_log.assert_has_calls(expected_log_calls)
+
     @patch.object(sys, 'argv', ['connectz.py', 'player_1_wins_with_column'])
     @patch('connectz.log')
     def test_player_1_wins_with_column(self, mocked_log):
@@ -51,6 +58,20 @@ class ConnectzTest(unittest.TestCase):
     def test_player_2_wins_with_row(self, mocked_log):
         connectz.main()
         expected_log_calls = (call(2),)
+        mocked_log.assert_has_calls(expected_log_calls)
+
+    @patch.object(sys, 'argv', ['connectz.py', 'incomplete_game'])
+    @patch('connectz.log')
+    def test_incomplete_game(self, mocked_log):
+        connectz.main()
+        expected_log_calls = (call(3),)
+        mocked_log.assert_has_calls(expected_log_calls)
+
+    @patch.object(sys, 'argv', ['connectz.py', 'incomplete_game_only_dimensions_line'])
+    @patch('connectz.log')
+    def test_incomplete_game_only_dimensions_line(self, mocked_log):
+        connectz.main()
+        expected_log_calls = (call(3),)
         mocked_log.assert_has_calls(expected_log_calls)
 
     @patch.object(sys, 'argv', ['connectz.py', 'illegal_row'])
