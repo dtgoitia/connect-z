@@ -133,12 +133,15 @@ class Board:
         """
         for i in range(0, len(segment) - (self.line_length - 1)):
             line = segment[i:i + self.line_length]
-            players_in_line = set(line)
-            if len(players_in_line) == 1:
-                winner = players_in_line.pop()
-                if winner == EMPTY_PLACE:
+            if EMPTY_PLACE in line:
+                continue
+
+            if PLAYER_A in line:
+                if PLAYER_B in line:
                     continue
-                return winner
+                return PLAYER_A
+            else:
+                return PLAYER_B
         else:
             return NO_WINNER
 
