@@ -74,6 +74,13 @@ class ConnectzTest(unittest.TestCase):
         expected_log_calls = (call(3),)
         mocked_log.assert_has_calls(expected_log_calls)
 
+    @patch.object(sys, 'argv', ['connectz.py', 'illegal_continue'])
+    @patch('connectz.log')
+    def test_illegal_continue(self, mocked_log):
+        connectz.main()
+        expected_log_calls = (call(4),)
+        mocked_log.assert_has_calls(expected_log_calls)
+
     @patch.object(sys, 'argv', ['connectz.py', 'illegal_row'])
     @patch('connectz.log')
     def test_illegal_row(self, mocked_log):
@@ -102,7 +109,6 @@ class ConnectzTest(unittest.TestCase):
         expected_log_calls = (call(8),)
         mocked_log.assert_has_calls(expected_log_calls)
 
-
     @patch.object(sys, 'argv', ['connectz.py', 'invalid_file_wrong_dimensions'])
     @patch('connectz.log')
     def test_invalid_file_wrong_dimensions(self, mocked_log):
@@ -123,7 +129,7 @@ class ConnectzTest(unittest.TestCase):
         connectz.main()
         expected_log_calls = (call(9),)
         mocked_log.assert_has_calls(expected_log_calls)
-    
+
     def test_affected_segments(self):
         game = connectz.Game(columns=7, rows=6, line_length=3, moves=())
         board = connectz.Board(game)
@@ -143,7 +149,6 @@ class ConnectzTest(unittest.TestCase):
         assert segments[1] == (5, 11, 17, 23) # affected row
         assert segments[2] == (4, 11, 18)     # affected diagonal a
         assert segments[3] == (21, 16, 11, 6) # affected diagonal b
-        
         assert len(segments) == 4
 
 

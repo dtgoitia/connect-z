@@ -219,11 +219,7 @@ class Board:
 def play(game: Game) -> int:
     validate_winnability(game)
 
-    # TODO: worth storing all states?
-    # only the previous state to see if after the game has been drawn or won,
-    # there are still more movevements specified in the input file, case in
-    # which you need to throw an excepion
-
+    winner = None
     board = Board(game)
     debug('')
 
@@ -237,6 +233,10 @@ def play(game: Game) -> int:
         extra = '' if outcome == 0 else " <-- win"
         debug(f'outcome: {outcome} {extra}')
         debug('')
+        if outcome != NO_WINNER:
+            if winner:
+                raise ValueError(Output.ILLEGAL_CONTINUE.value)
+            winner = outcome
 
     if outcome == NO_WINNER:
         max_moves = game.columns * game.rows
