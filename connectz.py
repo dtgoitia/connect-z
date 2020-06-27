@@ -3,7 +3,7 @@ import enum
 from collections import namedtuple
 from itertools import cycle, islice
 import pathlib
-from typing import Generator, List, Set, Tuple
+from typing import Generator, List, Set, Tuple, Union
 import sys
 
 from pympler import asizeof # TODO: delete
@@ -15,16 +15,16 @@ NO_WINNER = 0
 
 
 class Output(enum.Enum):
-    DRAW = '0'
-    PLAYER_1_WINS = '1'
-    PLAYER_2_WINS = '2'
-    INCOMPLETE = '3'
-    ILLEGAL_CONTINUE = '4'
-    ILLEGAL_ROW = '5'
-    ILLEGAL_COLUMN = '6'
-    ILLEGAL_GAME = '7'
-    INVALID_FILE = '8'
-    FILE_ERROR = '9'
+    DRAW = 0
+    PLAYER_1_WINS = 1
+    PLAYER_2_WINS = 2
+    INCOMPLETE = 3
+    ILLEGAL_CONTINUE = 4
+    ILLEGAL_ROW = 5
+    ILLEGAL_COLUMN = 6
+    ILLEGAL_GAME = 7
+    INVALID_FILE = 8
+    FILE_ERROR = 9
 
 
 def debug(message: str) -> None:
@@ -33,7 +33,7 @@ def debug(message: str) -> None:
     pass
 
 
-def log(message: str) -> None:
+def log(message: Union[int, str]) -> None:
     # TODO: use loggers to print
     print(message)
 
@@ -206,7 +206,7 @@ class Board:
                          for row in self.rows)
 
 
-def play(game: Game) -> str:
+def play(game: Game) -> int:
     validate_winnability(game)
 
     outcome = None
@@ -229,7 +229,7 @@ def play(game: Game) -> str:
         debug(f'outcome: {outcome} {extra}')
         debug('')
 
-    return str(outcome)
+    return outcome
 
 
 def main():
