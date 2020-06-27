@@ -126,24 +126,19 @@ class Board:
     def _check_winner_in_segment(self, segment: Tuple[int]) -> int:
         """Return 0 (no winner) or the number representing the winner.
 
-        A segment represents either a row, a column or a diagonal.
-        """
-        # Optimization
-        all_players = set(segment)
-        if len(all_players) == 1 and all_players.pop() == EMPTY_PLACE:
-            return NO_WINNER
+        A segment represents a subset of a row, a column or a diagonal.
 
-        line = list(segment[:self.line_length - 1])
-        remaining_values = segment[self.line_length - 1:]
-        for value in remaining_values:
-            line.append(value)
+        Assumption: all segments passed to this method will always include the
+        cell where the last chip was dropped.
+        """
+        for i in range(0, len(segment) - (self.line_length - 1)):
+            line = segment[i:i + self.line_length]
             players_in_line = set(line)
             if len(players_in_line) == 1:
                 winner = players_in_line.pop()
                 if winner == EMPTY_PLACE:
                     continue
                 return winner
-            line.pop(0)
         else:
             return NO_WINNER
 
