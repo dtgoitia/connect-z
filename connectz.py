@@ -86,6 +86,8 @@ class Board:
     row_amount: int
     _last_move: Dict[str, str]
 
+    __slots__ = ['board', 'line_length', 'column_amount', 'row_amount', '_last_move']
+ 
     def __init__(self, game: Game) -> None:
         self.board = [[EMPTY_PLACE for row in range(game.rows)]
                       for column in range(game.columns)]
