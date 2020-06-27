@@ -89,8 +89,11 @@ class Board:
     __slots__ = ['board', 'line_length', 'column_amount', 'row_amount', '_last_move']
  
     def __init__(self, game: Game) -> None:
-        self.board = [[EMPTY_PLACE for row in range(game.rows)]
-                      for column in range(game.columns)]
+        # The row that contains the columns never mutates, hence it can be a 
+        # tuple to speed up data retrieval.
+        # The columns, however, will mutate and therefore need to be lists.
+        self.board = tuple(([EMPTY_PLACE for row in range(game.rows)]
+                           for column in range(game.columns)))
         self.line_length = game.line_length
         self.column_amount = game.columns
         self.row_amount = game.rows
