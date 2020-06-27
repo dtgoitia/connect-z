@@ -1,10 +1,7 @@
 FILE_NAME=game_for_profilling
 
 good:
-	python connectz.py good_file
-
-bad:
-	python connectz.py foo
+	python connectz.py tests/good_file
 
 test:
 	python test_connectz.py
