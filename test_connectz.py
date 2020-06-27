@@ -15,14 +15,14 @@ class ConnectzTest(unittest.TestCase):
     @patch('connectz.log')
     def test_no_input_files_provided(self, mocked_log):
         connectz.main()
-        expected_log_calls = (call('Provide one input file'),)
+        expected_log_calls = (call('connectz.py: Provide one input file'),)
         mocked_log.assert_has_calls(expected_log_calls)
 
     @patch.object(sys, 'argv', ['connectz.py', EXISTING_FILE, EXISTING_FILE, NON_EXISTING_FILE])
     @patch('connectz.log')
     def test_many_input_files_provided(self, mocked_log):
         connectz.main()
-        expected_log_calls = (call('Provide one input file'),)
+        expected_log_calls = (call('connectz.py: Provide one input file'),)
         mocked_log.assert_has_calls(expected_log_calls)
 
     @patch.object(sys, 'argv', ['connectz.py', 'player_2_wins_with_row'])

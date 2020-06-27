@@ -45,7 +45,8 @@ def input_file() -> pathlib.PosixPath:
     files = args.inputfilename
 
     if len(files) != 1:
-        raise ValueError(f'{__file__}: Provide one input file')
+        file_name = pathlib.Path(__file__).name
+        raise ValueError(f'{file_name}: Provide one input file')
 
     file = files[0]
     path = pathlib.Path.cwd() / file
