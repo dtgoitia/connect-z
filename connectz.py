@@ -6,7 +6,6 @@ import pathlib
 from typing import Dict, Generator, List, Set, Tuple, Union
 import sys
 
-from pympler import asizeof # TODO: delete
 
 EMPTY_PLACE = 0
 PLAYER_A = 1
@@ -107,16 +106,49 @@ class Board:
         segments = self._segments_affected_by_last_move()
         return self._check_winner(segments)
 
-        # TODO: how to calculate draw? is there any empty cell?
-
     @property
     def columns(self) -> Generator[int, None, None]:
         return (column for column in self.board)
 
-    # Only used for logging the board... TODO: delete
-    @property
-    def rows(self) -> Generator[int, None, None]:
-        return (row for row in zip(*self.board))
+    def _check_winner(self, segments: Generator[Tuple[int], None, None]) -> int:
+        for segment in segments:
+            outcome = self._check_winner_in_segment(segment)
+            if outcome in (PLAYER_A, PLAYER_B):
+                return outcome
+        else:
+            return NO_WINNER
+
+    def _check_winner_in_segment(self, segment: Tuple[int]) -> int:
+        """Return 0 (no winner) or the number representing the winner.
+
+        A segment represents either a row, a column or a diagonal.
+        """
+        # Optimization
+        all_players = set(segment)
+        if len(all_players) == 1 and all_players.pop() == EMPTY_PLACE:
+            return NO_WINNER
+
+        line = list(segment[:self.line_length - 1])
+        remaining_values = segment[self.line_length - 1:]
+        for value in remaining_values:
+            line.append(value)
+            players_in_line = set(line)
+            if len(players_in_line) == 1:
+                winner = players_in_line.pop()
+                if winner == EMPTY_PLACE:
+                    continue
+                return winner
+            line.pop(0)
+        else:
+            return NO_WINNER
+
+    def _first_empty_row_by_column(self, column_index: int) -> int:
+        column = next(islice(self.columns, column_index, column_index + 1))
+        try:
+            return column.index(EMPTY_PLACE)
+        except ValueError:
+            # Column full, impossible to a chip here
+            raise ValueError(Output.ILLEGAL_ROW.value)
 
     def _segments_affected_by_last_move(self) -> Generator[Tuple[int], None, None]:
         # The status is checked in each iteration, hence is more efficient to
@@ -159,51 +191,6 @@ class Board:
                          0 <= row < self.row_amount)
         diagonal_b_values = tuple(diagonal_b)
         yield diagonal_b_values
-
-    def _check_winner(self, segments: Generator[Tuple[int], None, None]) -> int:
-        for segment in segments:
-            outcome = self._check_winner_in_segment(segment)
-            if outcome in (PLAYER_A, PLAYER_B):
-                return outcome
-        else:
-            return NO_WINNER
-
-    def _check_winner_in_segment(self, segment: Tuple[int]) -> int:
-        """Return 0 (no winner) or the number representing the winner.
-
-        A segment represents either a row, a column or a diagonal.
-        """
-        # Optimization
-        all_players = set(segment)
-        if len(all_players) == 1 and all_players.pop() == EMPTY_PLACE:
-            return NO_WINNER
-
-        line = list(segment[:self.line_length - 1])
-        remaining_values = segment[self.line_length - 1:]
-        for value in remaining_values:
-            line.append(value)
-            players_in_line = set(line)
-            if len(players_in_line) == 1:
-                winner = players_in_line.pop()
-                if winner == EMPTY_PLACE:
-                    continue # TODO: is this correct?
-                return winner
-            line.pop(0)
-        else:
-            return NO_WINNER
-
-    def _first_empty_row_by_column(self, column_index: int) -> int:
-        column = next(islice(self.columns, column_index, column_index + 1))
-        try:
-            return column.index(EMPTY_PLACE)
-        except ValueError:
-            # Column full, impossible to a chip here
-            raise ValueError(Output.ILLEGAL_ROW.value)
-
-    def __str__(self) -> str:
-        # TODO: for debugging purposes, delete after
-        return '\n'.join(' '.join(str(column) for column in row)
-                         for row in self.rows)
 
 
 def play(game: Game) -> int:

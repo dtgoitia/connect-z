@@ -35,6 +35,3 @@ Instead of searching the whole board in each move:
 According to the input file specification "after the game dimensions line, each
 subsequent line of the file represents a single move in the game". Hence a file
 with empty lines between the moves will result in an invalid game.
-
-- [ ] Look for TODOs
-- [ ] plot how the memory grows when the board gets bigger with `list` or with `array.array`
