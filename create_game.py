@@ -3,7 +3,7 @@ import pathlib
 import sys
 
 
-ITERATIONS = 1_000
+ITERATIONS = 5_000
 
 
 def main():
