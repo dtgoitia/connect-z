@@ -95,7 +95,7 @@ class Board:
         self.row_amount = game.rows
         self._last_move = None
 
-    def drop_chip(self, player: int, column: int) -> None:
+    def drop_chip(self, player: int, column: int) -> int:
         if self.column_amount < column:
             raise ValueError(Output.ILLEGAL_COLUMN.value)
         row = self._first_empty_row_by_column(column)
@@ -104,34 +104,16 @@ class Board:
         return self.status()
 
     def status(self) -> int:
-        # Where are we? Has anyone won yet?
+        segments = self._segments_affected_by_last_move()
+        return self._check_winner(segments)
 
-        segments_generator = self._segments_affected_by_last_move()
-        # check segments
-        # return outcome
-
-        # most common win: diagonal, then column, then row
-        # diagonal_winner = self._check_diagonal_lines()
-        # if diagonal_winner:
-        #     debug(f'{diagonal_winner} wins with a diagonal line')
-        #     return diagonal_winner
-
-        # column_winner = self._check_column_lines()
-        # if column_winner:
-        #     debug(f'{column_winner} wins with a column line')
-        #     return column_winner
-
-        row_winner = self._check_row_lines()
-        if row_winner:
-            debug(f'{row_winner} wins with a row line')
-            return row_winner
-        
         # TODO: how to calculate draw? is there any empty cell?
 
     @property
     def columns(self) -> Generator[int, None, None]:
         return (column for column in self.board)
 
+    # Only used for logging the board... TODO: delete
     @property
     def rows(self) -> Generator[int, None, None]:
         return (row for row in zip(*self.board))
@@ -178,42 +160,32 @@ class Board:
         diagonal_b_values = tuple(diagonal_b)
         yield diagonal_b_values
 
-    # TODO: delete
-    def _check_row_lines(self) -> int:
-        # Return 0 if no winner
-        # Return 1 if player 1 wins
-        # Return 2 if player 2 wins
-        winner = 0
-        for row in self.rows:
-            row = tuple(row)
-            # debug(f'Checking {row}')
-            for start_column in range(self.column_amount - (self.line_length - 1)):
-                end_column = start_column + self.line_length
-                # debug(f'columns = {start_column}-{end_column}')
-                line = tuple(islice(row, start_column, end_column))
-                # debug(f'line: {line}')
-                players_involved = set(line)
-                if len(players_involved) == 1:
-                    winner = players_involved.pop()
-                    return winner
+    def _check_winner(self, segments: Generator[Tuple[int], None, None]) -> int:
+        for segment in segments:
+            outcome = self._check_winner_in_segment(segment)
+            if outcome in (PLAYER_A, PLAYER_B):
+                return outcome
+        else:
+            return NO_WINNER
 
     def _check_winner_in_segment(self, segment: Tuple[int]) -> int:
         """Return 0 (no winner) or the number representing the winner.
 
         A segment represents either a row, a column or a diagonal.
         """
-        # Optimization: no winner if segment is empty
-        if set(segment).pop() == 0:
+        # Optimization
+        all_players = set(segment)
+        if len(all_players) == 1 and all_players.pop() == EMPTY_PLACE:
             return NO_WINNER
 
-        line = segment[:self.line_length - 1]
+        line = list(segment[:self.line_length - 1])
         remaining_values = segment[self.line_length - 1:]
         for value in remaining_values:
             line.append(value)
             players_in_line = set(line)
             if len(players_in_line) == 1:
                 winner = players_in_line.pop()
-                if winner == 0:
+                if winner == EMPTY_PLACE:
                     continue # TODO: is this correct?
                 return winner
             line.pop(0)
@@ -253,8 +225,8 @@ def play(game: Game) -> str:
         outcome = board.drop_chip(player, column)
         debug('')
         debug(board)
-        # outcome = board.status()
-        debug(f'outcome={outcome}')
+        extra = '' if outcome == 0 else " <-- win"
+        debug(f'outcome: {outcome} {extra}')
         debug('')
 
     return str(outcome)

@@ -25,6 +25,27 @@ class ConnectzTest(unittest.TestCase):
         expected_log_calls = (call('connectz.py: Provide one input file'),)
         mocked_log.assert_has_calls(expected_log_calls)
 
+    @patch.object(sys, 'argv', ['connectz.py', 'player_1_wins_with_column'])
+    @patch('connectz.log')
+    def test_player_1_wins_with_column(self, mocked_log):
+        connectz.main()
+        expected_log_calls = (call('1'),)
+        mocked_log.assert_has_calls(expected_log_calls)
+
+    @patch.object(sys, 'argv', ['connectz.py', 'player_2_wins_with_diagonal_topleft_bottomright'])
+    @patch('connectz.log')
+    def test_player_2_wins_with_diagonal_topleft_bottomright(self, mocked_log):
+        connectz.main()
+        expected_log_calls = (call('2'),)
+        mocked_log.assert_has_calls(expected_log_calls)
+
+    @patch.object(sys, 'argv', ['connectz.py', 'player_2_wins_with_diagonal_topright_bottomleft'])
+    @patch('connectz.log')
+    def test_player_2_wins_with_diagonal_topright_bottomleft(self, mocked_log):
+        connectz.main()
+        expected_log_calls = (call('2'),)
+        mocked_log.assert_has_calls(expected_log_calls)
+
     @patch.object(sys, 'argv', ['connectz.py', 'player_2_wins_with_row'])
     @patch('connectz.log')
     def test_player_2_wins_with_row(self, mocked_log):
