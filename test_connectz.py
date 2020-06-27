@@ -102,6 +102,13 @@ class ConnectzTest(unittest.TestCase):
         expected_log_calls = (call(7),)
         mocked_log.assert_has_calls(expected_log_calls)
 
+    @patch.object(sys, 'argv', ['connectz.py', 'invalid_file_discontinuous_moves'])
+    @patch('connectz.log')
+    def test_invalid_file_discontinuous_moves(self, mocked_log):
+        connectz.main()
+        expected_log_calls = (call(8),)
+        mocked_log.assert_has_calls(expected_log_calls)
+
     @patch.object(sys, 'argv', ['connectz.py', 'invalid_file_empty_file'])
     @patch('connectz.log')
     def test_invalid_file_empty_file(self, mocked_log):

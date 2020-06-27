@@ -28,3 +28,7 @@ Instead of searching the whole board in each move:
      limited by the cells that -being N the number of cells in the line that
      wins the game- are N cells away from the cell where the last move was
      done. The segments cannot stretch beyond the board limits.
+
+According to the input file specification "after the game dimensions line, each
+subsequent line of the file represents a single move in the game". Hence a file
+with empty lines between the moves will result in an invalid game.
