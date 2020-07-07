@@ -3,6 +3,7 @@ import unittest
 from unittest.mock import call, patch
 
 import connectz
+from connectz import Output
 
 
 EXISTING_FILE = 'test/good_file'
@@ -29,120 +30,103 @@ class ConnectzTest(unittest.TestCase):
     @patch('connectz.log')
     def test_draw(self, mocked_log):
         connectz.main()
-        expected_log_calls = (call(0),)
-        mocked_log.assert_has_calls(expected_log_calls)
+        mocked_log.assert_has_calls([call(Output.DRAW.value)])
 
     @patch.object(sys, 'argv', ['connectz.py', 'tests/player_1_wins_with_column'])
     @patch('connectz.log')
     def test_player_1_wins_with_column(self, mocked_log):
         connectz.main()
-        expected_log_calls = (call(1),)
-        mocked_log.assert_has_calls(expected_log_calls)
+        mocked_log.assert_has_calls([call(Output.PLAYER_1_WINS.value)])
 
     @patch.object(sys, 'argv', ['connectz.py', 'tests/player_2_wins_with_diagonal_topleft_bottomright'])
     @patch('connectz.log')
     def test_player_2_wins_with_diagonal_topleft_bottomright(self, mocked_log):
         connectz.main()
-        expected_log_calls = (call(2),)
-        mocked_log.assert_has_calls(expected_log_calls)
+        mocked_log.assert_has_calls([call(Output.PLAYER_2_WINS.value)])
 
     @patch.object(sys, 'argv', ['connectz.py', 'tests/player_2_wins_with_diagonal_topright_bottomleft'])
     @patch('connectz.log')
     def test_player_2_wins_with_diagonal_topright_bottomleft(self, mocked_log):
         connectz.main()
-        expected_log_calls = (call(2),)
-        mocked_log.assert_has_calls(expected_log_calls)
+        mocked_log.assert_has_calls([call(Output.PLAYER_2_WINS.value)])
 
     @patch.object(sys, 'argv', ['connectz.py', 'tests/player_2_wins_with_row'])
     @patch('connectz.log')
     def test_player_2_wins_with_row(self, mocked_log):
         connectz.main()
-        expected_log_calls = (call(2),)
-        mocked_log.assert_has_calls(expected_log_calls)
+        mocked_log.assert_has_calls([call(Output.PLAYER_2_WINS.value)])
 
     @patch.object(sys, 'argv', ['connectz.py', 'tests/incomplete_game'])
     @patch('connectz.log')
     def test_incomplete_game(self, mocked_log):
         connectz.main()
-        expected_log_calls = (call(3),)
-        mocked_log.assert_has_calls(expected_log_calls)
+        mocked_log.assert_has_calls([call(Output.INCOMPLETE.value)])
 
     @patch.object(sys, 'argv', ['connectz.py', 'tests/incomplete_game_only_dimensions_line'])
     @patch('connectz.log')
     def test_incomplete_game_only_dimensions_line(self, mocked_log):
         connectz.main()
-        expected_log_calls = (call(3),)
-        mocked_log.assert_has_calls(expected_log_calls)
+        mocked_log.assert_has_calls([call(Output.INCOMPLETE.value)])
 
     @patch.object(sys, 'argv', ['connectz.py', 'tests/illegal_continue'])
     @patch('connectz.log')
     def test_illegal_continue(self, mocked_log):
         connectz.main()
-        expected_log_calls = (call(4),)
-        mocked_log.assert_has_calls(expected_log_calls)
+        mocked_log.assert_has_calls([call(Output.ILLEGAL_CONTINUE.value)])
 
     @patch.object(sys, 'argv', ['connectz.py', 'tests/illegal_row'])
     @patch('connectz.log')
     def test_illegal_row(self, mocked_log):
         connectz.main()
-        expected_log_calls = (call(5),)
-        mocked_log.assert_has_calls(expected_log_calls)
+        mocked_log.assert_has_calls([call(Output.ILLEGAL_ROW.value)])
 
     @patch.object(sys, 'argv', ['connectz.py', 'tests/illegal_column_too_big'])
     @patch('connectz.log')
     def test_illegal_column_too_big(self, mocked_log):
         connectz.main()
-        expected_log_calls = (call(6),)
-        mocked_log.assert_has_calls(expected_log_calls)
+        mocked_log.assert_has_calls([call(Output.ILLEGAL_COLUMN.value)])
 
     @patch.object(sys, 'argv', ['connectz.py', 'tests/illegal_column_too_small'])
     @patch('connectz.log')
     def test_illegal_column_too_small(self, mocked_log):
         connectz.main()
-        expected_log_calls = (call(6),)
-        mocked_log.assert_has_calls(expected_log_calls)
+        mocked_log.assert_has_calls([call(Output.ILLEGAL_COLUMN.value)])
 
     @patch.object(sys, 'argv', ['connectz.py', 'tests/illegal_game'])
     @patch('connectz.log')
     def test_illegal_game(self, mocked_log):
         connectz.main()
-        expected_log_calls = (call(7),)
-        mocked_log.assert_has_calls(expected_log_calls)
+        mocked_log.assert_has_calls([call(Output.ILLEGAL_GAME.value)])
 
     @patch.object(sys, 'argv', ['connectz.py', 'tests/invalid_file_discontinuous_moves'])
     @patch('connectz.log')
     def test_invalid_file_discontinuous_moves(self, mocked_log):
         connectz.main()
-        expected_log_calls = (call(8),)
-        mocked_log.assert_has_calls(expected_log_calls)
+        mocked_log.assert_has_calls([call(Output.INVALID_FILE.value)])
 
     @patch.object(sys, 'argv', ['connectz.py', 'tests/invalid_file_empty_file'])
     @patch('connectz.log')
     def test_invalid_file_empty_file(self, mocked_log):
         connectz.main()
-        expected_log_calls = (call(8),)
-        mocked_log.assert_has_calls(expected_log_calls)
+        mocked_log.assert_has_calls([call(Output.INVALID_FILE.value)])
 
     @patch.object(sys, 'argv', ['connectz.py', 'tests/invalid_file_wrong_dimensions'])
     @patch('connectz.log')
     def test_invalid_file_wrong_dimensions(self, mocked_log):
         connectz.main()
-        expected_log_calls = (call(8),)
-        mocked_log.assert_has_calls(expected_log_calls)
+        mocked_log.assert_has_calls([call(Output.INVALID_FILE.value)])
 
     @patch.object(sys, 'argv', ['connectz.py', 'tests/invalid_file_wrong_move'])
     @patch('connectz.log')
     def test_invalid_file_wrong_move(self, mocked_log):
         connectz.main()
-        expected_log_calls = (call(8),)
-        mocked_log.assert_has_calls(expected_log_calls)
+        mocked_log.assert_has_calls([call(Output.INVALID_FILE.value)])
 
     @patch.object(sys, 'argv', ['connectz.py', NON_EXISTING_FILE])
     @patch('connectz.log')
     def test_file_error(self, mocked_log):
         connectz.main()
-        expected_log_calls = (call(9),)
-        mocked_log.assert_has_calls(expected_log_calls)
+        mocked_log.assert_has_calls([call(Output.FILE_ERROR.value)])
 
     def test_affected_segments(self):
         game = connectz.Game(columns=7, rows=6, line_length=3, moves=())

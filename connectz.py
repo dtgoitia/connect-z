@@ -47,33 +47,42 @@ def input_file() -> pathlib.PosixPath:
     return path
 
 
-Game = namedtuple('Game', ['columns', 'rows', 'line_length', 'moves'])
+Dimensions = namedtuple('Dimensions', ['columns', 'rows', 'line_length'])
 
 
 def parse_dimensions_line(line: str) -> Tuple[int]:
-    game_dimensions = line.strip().split(' ')
+    game_dimensions = line.rstrip().split(' ')
     if len(game_dimensions) != 3:
         raise ValueError(Output.INVALID_FILE.value)
     return tuple((int(dimension) for dimension in game_dimensions)) 
 
 
-def parse_game(path: pathlib.PosixPath) -> Game:
+def parse_game(path: pathlib.PosixPath) -> Generator:
     with open(path, 'r') as file:
         try:
             first_file_line = next(file)
-            game_dimensions = parse_dimensions_line(first_file_line)
-            moves = tuple((int(line) for line in file if line))
         except:
+            # file is empty
             raise ValueError(Output.INVALID_FILE.value)
 
-        if not moves:
-            raise ValueError(Output.INCOMPLETE.value)
-        return Game(*game_dimensions, moves)
+        dimensions = first_file_line.rstrip().split(' ')
+        if len(dimensions) != 3:
+            raise ValueError(Output.INVALID_FILE.value)
+
+        dimensions = (int(dimension) for dimension in dimensions)
+        yield Dimensions(*dimensions)
+
+        for move in file:
+            try:
+                yield int(move.rstrip())
+            except ValueError:
+                # the move contains contains a non-numeric value
+                raise ValueError(Output.INVALID_FILE.value)
 
 
-def validate_winnability(game: Game) -> None:
-    if (game.line_length <= game.columns or 
-        game.line_length <= game.rows):
+def validate_winnability(dimensions: Dimensions) -> None:
+    if (dimensions.line_length <= dimensions.columns or 
+        dimensions.line_length <= dimensions.rows):
         return
     raise ValueError(Output.ILLEGAL_GAME.value)
 
@@ -88,15 +97,17 @@ class Board:
     __slots__ = ['board', 'line_length', 'column_amount', 'row_amount',
                  '_last_move']
  
-    def __init__(self, game: Game) -> None:
+    def __init__(self, dimensions: Dimensions) -> None:
         # The row that contains the columns never mutates, hence it can be a 
         # tuple to speed up data retrieval.
         # The columns, however, will mutate and therefore need to be lists.
-        self.board = tuple(([EMPTY_PLACE for row in range(game.rows)]
-                           for column in range(game.columns)))
-        self.line_length = game.line_length
-        self.column_amount = game.columns
-        self.row_amount = game.rows
+        self.board = tuple([EMPTY_PLACE for row in range(dimensions.rows)]
+                           for column in range(dimensions.columns))
+                           # TODO: think how can you add chips on the go, and
+                           # check efficiently if the column is full, etc.
+        self.line_length = dimensions.line_length
+        self.column_amount = dimensions.columns
+        self.row_amount = dimensions.rows
         self._last_move = None
 
     def drop_chip(self, player: int, column: int) -> int:
@@ -191,25 +202,29 @@ class Board:
         yield diagonal_b_values
 
 
-def play(game: Game) -> int:
-    validate_winnability(game)
-
-    winner = None
-    board = Board(game)
+def play(dimensions: Dimensions, moves: Generator) -> int:
+    winner, outcome = None, None
+    board = Board(dimensions)
 
     players = cycle((PLAYER_A, PLAYER_B))
-    for move, player in zip(game.moves, players):
+    for move_counter, (move, player) in enumerate(zip(moves, players)):
         column = move - 1 # translate from 1-based to 0-based index
         outcome = board.drop_chip(player, column)
         if outcome != NO_WINNER:
             if winner:
                 raise ValueError(Output.ILLEGAL_CONTINUE.value)
             winner = outcome
+    
+    if outcome is None:
+        # No moves in the input file, only game dimensions
+        return Output.INCOMPLETE.value
 
     if outcome == NO_WINNER:
-        max_moves = game.columns * game.rows
-        if len(game.moves) == max_moves:
+        max_moves = dimensions.columns * dimensions.rows
+        if move_counter + 1 == max_moves:
+            # All board is full, but no winner
             return Output.DRAW.value
+        # All moves consumed, but no winner
         return Output.INCOMPLETE.value
     return outcome
 
@@ -217,8 +232,12 @@ def play(game: Game) -> int:
 def main():
     try:
         path = input_file()
-        game = parse_game(path)
-        outcome = play(game)
+        parsed_game = parse_game(path)
+
+        dimensions = next(parsed_game)
+        validate_winnability(dimensions)
+
+        outcome = play(dimensions, parsed_game)
         log(outcome)
     except (ValueError, FileNotFoundError) as e:
         log(e.args[0])
