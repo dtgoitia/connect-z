@@ -2,7 +2,7 @@ import pathlib
 import sys
 
 
-ITERATIONS = 5_000
+ITERATIONS = 5_000  # 4 rows per iteration
 
 
 def main():
