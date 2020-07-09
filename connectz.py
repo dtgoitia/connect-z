@@ -176,9 +176,7 @@ class Board:
         column_range = range(start_column, end_column + 1)
         row_range = range(start_row, end_row)
 
-        column_values = tuple((self.board[last_column][row]
-                               for row in row_range
-                               if 0 <= row < self.row_amount))
+        column_values = self.board[last_column][start_row:end_row]
         yield column_values
 
         row_values = tuple((self.board[column][last_row]
