@@ -1,7 +1,7 @@
 import argparse
 import enum
 from collections import namedtuple
-from itertools import cycle
+from itertools import cycle, islice
 import pathlib
 from typing import Dict, Generator, List, Set, Tuple, Union
 
@@ -119,11 +119,7 @@ class Board:
         return self.status()
 
     def status(self) -> int:
-        segments = self._segments_affected_by_last_move()
-        return self._check_winner(segments)
-
-    def _check_winner(self, segments: Generator[Tuple[int], None, None]) -> int:
-        for segment in segments:
+        for segment in self._segments_affected_by_last_move():
             outcome = self._check_winner_in_segment(segment)
             if outcome != NO_WINNER:
                 return outcome
@@ -168,36 +164,46 @@ class Board:
         last_row = self._last_move['row']
         distance = self.line_length - 1
 
+        # these values may fall outside the board
         start_column = last_column - distance
         end_column = last_column + distance
         start_row = last_row - distance
         end_row = last_row + distance
 
-        column_range = range(start_column, end_column + 1)
-        row_range = range(start_row, end_row)
-
         column_values = self.board[last_column][start_row:end_row]
         yield column_values
 
-        row_values = tuple((self.board[column][last_row]
-                            for column in column_range
-                            if 0 <= column < self.column_amount))
+        row_start_column = max(0, start_column)
+        row_end_column = min(end_column, self.column_amount)
+        rows = zip(*self.board)
+        full_row_values = next(islice(rows, last_row, last_row + 1))
+        row_values = full_row_values[row_start_column:row_end_column + 1]
         yield row_values
 
-        diagonal_a = (self.board[column][row]
-                      for column, row in zip(column_range, row_range)
-                      if 0 <= column < self.column_amount and
-                         0 <= row < self.row_amount)
-        diagonal_a_values = tuple(diagonal_a)
-        yield diagonal_a_values
+        # Diagonal A
+        max_column = self.column_amount
+        max_row = self.row_amount
+        # min_column = 0
+        # min_row = 0
 
+        # offset_start = min(0, start_column - min_column, start_row - min_row)
+        offset_start = min(0, start_column, start_row)
+        offset_end = min(0, max_column - end_column, max_row - end_row)
+
+        column_range = range(start_column - offset_start,
+                             end_column + offset_end)
+        row_range = range(start_row - offset_start, end_row + offset_end)
+
+        yield [self.board[column][row]
+               for column, row in zip(column_range, row_range)]
+
+        # Diagonal B
+        row_range = range(start_row, end_row)
         reversed_column_range = range(end_column, start_column, -1)
-        diagonal_b = (self.board[column][row]
-                      for column, row in zip(reversed_column_range, row_range)
-                      if 0 <= column < self.column_amount and
-                         0 <= row < self.row_amount)
-        diagonal_b_values = tuple(diagonal_b)
-        yield diagonal_b_values
+        yield [self.board[column][row]
+               for column, row in zip(reversed_column_range, row_range)
+               if 0 <= column < self.column_amount and
+                  0 <= row < self.row_amount]
 
 
 def play(dimensions: Dimensions, moves: Generator) -> int:

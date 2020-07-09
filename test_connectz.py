@@ -129,8 +129,8 @@ class ConnectzTest(unittest.TestCase):
         mocked_log.assert_has_calls([call(Output.FILE_ERROR.value)])
 
     def test_affected_segments(self):
-        game = connectz.Game(columns=7, rows=6, line_length=3, moves=())
-        board = connectz.Board(game)
+        dimensions = connectz.Dimensions(columns=7, rows=6, line_length=3)
+        board = connectz.Board(dimensions)
         board.board = [
         # row 0  1  2...
             [ 1, 2, 3, 4, 5, 6], # column 0
@@ -143,10 +143,10 @@ class ConnectzTest(unittest.TestCase):
         ]
         board._last_move = {'column': 1, 'row': 4}
         segments = [s for s in board._segments_affected_by_last_move()]
-        assert segments[0] == (9, 10, 11, 12) # affected column
-        assert segments[1] == (5, 11, 17, 23) # affected row
-        assert segments[2] == (4, 11, 18)     # affected diagonal a
-        assert segments[3] == (21, 16, 11, 6) # affected diagonal b
+        assert tuple(segments[0]) == (9, 10, 11, 12) # affected column
+        assert tuple(segments[1]) == (5, 11, 17, 23) # affected row
+        assert tuple(segments[2]) == (4, 11, 18)     # affected diagonal a
+        assert tuple(segments[3]) == (21, 16, 11, 6) # affected diagonal b
         assert len(segments) == 4
 
 

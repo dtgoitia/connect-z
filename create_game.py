@@ -46,7 +46,7 @@ def create_game(file_name, *, columns, rows, line_length) -> pathlib.Path:
 
 def main():
     file_name = sys.argv[1]
-    n = sys.argv[2]
+    n = int(sys.argv[2])
     create_game(file_name, columns=n, rows=n, line_length=n)
 
 
