@@ -4,11 +4,6 @@ import pathlib
 import sys
 
 
-N = 1_000
-COLUMNS = N
-ROWS = N
-LINE_LENGTH = N
-
 def move_generator(columns: int, rows: int, line_length: int):
     if line_length < 3:
         raise ValueError(f'line length must be 3 or bigger')
@@ -39,11 +34,11 @@ def move_generator(columns: int, rows: int, line_length: int):
                 yield move
 
 
-def create_game(file_name) -> pathlib.Path:
+def create_game(file_name, *, columns, rows, line_length) -> pathlib.Path:
     path = pathlib.Path.cwd() / 'profilling' / file_name
     with open(path, 'w') as file:
-        file.write(f'{COLUMNS} {ROWS} {LINE_LENGTH}\n')
-        for i, move in enumerate(move_generator(COLUMNS, ROWS, LINE_LENGTH)):
+        file.write(f'{columns} {rows} {line_length}\n')
+        for i, move in enumerate(move_generator(columns, rows, line_length)):
             file.write(f'{move}\n')
     print(f'File "{path}" created with {i:,} moves')
     return path
@@ -51,7 +46,8 @@ def create_game(file_name) -> pathlib.Path:
 
 def main():
     file_name = sys.argv[1]
-    create_game(file_name)
+    n = sys.argv[2]
+    create_game(file_name, columns=n, rows=n, line_length=n)
 
 
 if __name__ == "__main__":

@@ -49,7 +49,8 @@ def profile_game(file_name: str):
 
 
 def main():
-    game_path = create_game(FILE_NAME)
+    n = 50
+    game_path = create_game(FILE_NAME, columns=n, rows=n, line_length=n)
     durations = []
 
     for n in range(4):
