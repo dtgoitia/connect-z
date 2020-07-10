@@ -113,12 +113,17 @@ class Board:
     def drop_chip(self, player: int, column: int) -> int:
         if column < 0 or self.column_amount <= column:
             raise ValueError(Output.ILLEGAL_COLUMN.value)
-        row = self._first_empty_row_by_column(column)
+
+        try:
+            # First empty row in column
+            row = self.board[column].index(EMPTY_PLACE)
+        except ValueError:
+            # Column full, impossible to a chip here
+            raise ValueError(Output.ILLEGAL_ROW.value)
+
         self.board[column][row] = player
         self._last_move = {'column': column, 'row': row}
-        return self.status()
 
-    def status(self) -> int:
         for segment in self._segments_affected_by_last_move():
             outcome = self._check_winner_in_segment(segment)
             if outcome != NO_WINNER:
@@ -147,13 +152,6 @@ class Board:
                 return PLAYER_B
         else:
             return NO_WINNER
-
-    def _first_empty_row_by_column(self, column_index: int) -> int:
-        try:
-            return self.board[column_index].index(EMPTY_PLACE)
-        except ValueError:
-            # Column full, impossible to a chip here
-            raise ValueError(Output.ILLEGAL_ROW.value)
 
     def _segments_affected_by_last_move(self) -> Generator[Tuple[int], None, None]:
         # The status is checked in each iteration, hence is more efficient to
