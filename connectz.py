@@ -158,6 +158,7 @@ class Board:
         # check only the cells that could potentially form a winning line with
         # the just updated cell (X), and ignoring any cell that is further than
         # N cells away from X, where N is length of the line to win the game.
+        board = self.board
         last_column = self._last_move['column']
         last_row = self._last_move['row']
         distance = self.line_length - 1
@@ -168,12 +169,12 @@ class Board:
         start_row = last_row - distance
         end_row = last_row + distance
 
-        column_values = self.board[last_column][start_row:end_row]
+        column_values = board[last_column][start_row:end_row]
         yield column_values
 
         row_start_column = max(0, start_column)
         row_end_column = min(end_column, self.column_amount)
-        rows = zip(*self.board)
+        rows = zip(*board)
         full_row_values = next(islice(rows, last_row, last_row + 1))
         row_values = full_row_values[row_start_column:row_end_column + 1]
         yield row_values
@@ -192,16 +193,15 @@ class Board:
                              end_column + offset_end)
         row_range = range(start_row - offset_start, end_row + offset_end)
 
-        yield [self.board[column][row]
+        yield [board[column][row]
                for column, row in zip(column_range, row_range)]
 
         # Diagonal B
         row_range = range(start_row, end_row)
         reversed_column_range = range(end_column, start_column, -1)
-        yield [self.board[column][row]
+        yield [board[column][row]
                for column, row in zip(reversed_column_range, row_range)
-               if 0 <= column < self.column_amount and
-                  0 <= row < self.row_amount]
+               if 0 <= column < max_column and 0 <= row < max_row]
 
 
 def play(dimensions: Dimensions, moves: Generator) -> int:
