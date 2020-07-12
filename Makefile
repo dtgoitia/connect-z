@@ -4,7 +4,9 @@ good:
 	python connectz.py profilling/30
 
 stress:
-	time python connectz.py profilling/million
+	python create_game.py 700 700
+	time python connectz.py profilling/700
+	# time python connectz.py profilling/million
 
 test:
 	python test_connectz.py
