@@ -1,4 +1,5 @@
 import sys
+import tempfile
 import unittest
 from unittest.mock import call, patch
 
@@ -144,6 +145,13 @@ class ConnectzTest(unittest.TestCase):
         connectz.main()
         expected_log_calls = (call(9),)
         mocked_log.assert_has_calls(expected_log_calls)
+
+    @patch("connectz.log")
+    def test_directory_as_input(self, mocked_log):
+        with tempfile.TemporaryDirectory() as empty_dir, patch.object(sys, "argv", ["connectz.py", empty_dir]):
+            connectz.main()
+            expected_log_calls = (call(9),)
+            mocked_log.assert_has_calls(expected_log_calls)
 
 
 if __name__ == "__main__":

@@ -85,7 +85,7 @@ def input_file() -> pathlib.Path:
 
     file_name = arguments[0]
     path = pathlib.Path.cwd() / file_name
-    if not path.exists():
+    if not path.exists() or path.is_dir():
         raise FileNotFoundError(Output.FILE_ERROR.value)
 
     return path
