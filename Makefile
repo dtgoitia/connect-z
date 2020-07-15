@@ -1,17 +1,14 @@
-FILE_NAME=game_for_profilling
+STRESS_AMOUNT=1000
 
 good:
-	python connectz.py tests/good_file
+	python connectz.py profilling/30
+
+stress:
+	python create_game.py ${STRESS_AMOUNT} ${STRESS_AMOUNT}
+	time python connectz.py profilling/${STRESS_AMOUNT}
 
 test:
 	python test_connectz.py
 
 profile:
-	python create_game.py $(FILE_NAME)_1
-	python profile_game.py $(FILE_NAME)_1
-	cp profilling/$(FILE_NAME)_1 profilling/$(FILE_NAME)_2
-	python profile_game.py $(FILE_NAME)_2
-	cp profilling/$(FILE_NAME)_1 profilling/$(FILE_NAME)_3
-	python profile_game.py $(FILE_NAME)_3
-	cp profilling/$(FILE_NAME)_1 profilling/$(FILE_NAME)_4
-	python profile_game.py $(FILE_NAME)_4
+	python profile_game.py

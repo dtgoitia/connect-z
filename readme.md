@@ -44,33 +44,74 @@
   switching to a 'by-columns' approach made it easier to find the first free
   row in a given column, which is a huge benefit. 
 
-* Finding winning moves. Instead of searching the whole board in each move, the
-  current algorithm does the following:
+* Finding winning moves. The latest algorithm works as follows:
 
-  1. Check if there is any winning/losing game after each move.
+  - The board stores 4 overlapped states: 1 state per type of line -vertical,
+    horizontal and diagonals.
 
-  2. Only check the segments of the rows, columns and diagonals which might be
-     now -after the last move- potential candidates to contain a winning line.
+  - Each cell in each state tracks:
 
-     These segments are included in the rows, columns and diagonals that cross
-     the cell where the last move was done. The length of the segments is
-     limited by the cells that -being _n_ the number of cells in the line that
-     wins the game- are _n_ cells away from the cell where the last move was
-     done. The segments cannot stretch beyond the board limits.
+    1. Line length achieved so far (`n`): integer that describes how many chips
+    in a row of the same player are next to a given cell.
+
+    2. Completeness: boolean value that describes the cell is complete when one
+    of its adjacent cells cannot grow further in that direction.
+    
+    Example: analysing rows, imagine that the cell where the player 1 drops the
+    chip (x) has another 3 chips of the same player (1) to the right and the
+    player 2 has another chip (2) just after:
+    
+    ```
+    | · · 2 1 1 1 x · |
+    ```
+
+    where:
+
+      - `|`: board edge 
+
+      - `·`: empty space
+
+      - `x`: dropped chip (belongs to player 1)
+
+      - `1`: player 1 chips
+
+      - `2`: player 2 chips
+
+    In this line, once the player 1 drops its chip, all player 1 chips will
+    have an `n` of 4. All player 1 chips will be completed too, because the
+    line cannot grow towards the left, as there is a player 2 chip blocking
+    that direction of progress for the player 1.
+
+  - When a chip is dropped in a cell, only the nearest 2 cells need to be
+    checked per line type (vertical/horizontal/diagonal) in order to determine
+    if there is a winning line. If there is not a winning move, only 3 cells
+    might need updating:
+
+      - Cell where the chip was dropped in the last move.
+
+      - Cell at the left end: this is the furthest cell in a given direction,
+        assuming all cells in between belong to the same player. This cell is
+        easy to find as the cell immediately adjacent to the last move tells us
+        how many cells away is with the `n` value.
+
+  - Main benefit: constant time complexity to check winning moves, regardless
+    of the line size or board size.
 
 ## Others
 
-* Using the `argparse.FileType` type to get the input file was convenient,
+* ~~Using the `argparse.FileType` type to get the input file was convenient,
   until I tried to pass non existing paths. Capturing the error message
   (`No such file or directory`) required using custom types and it was much
   easier to use a simple validator instead (`validate_file_path`) once the path
-  was passed as a string.
+  was passed as a string.~~ Using `sys.argv` is simpler and cleaner.
 
 * No special logic required for ASCII files as UTF-8 is backwards compatible
   with ASCII [[2][2]].
 
-* This project was entirely built and formatted without any linter, formatter,
-  etc. to follow the "third party libraries are not allowed" instruction.
+* This project was entirely built and formatted without any linter,
+  ~~formatter~~, etc. to follow the "third party libraries are not allowed"
+  instruction. `black` was used to speed up formatting during the last
+  refactor.
 
 * This project has been run and tested with Python 3.6.9.
 
